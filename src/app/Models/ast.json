@@ -1,0 +1,69 @@
+[
+  {
+    "tipo": "INSTR_ASIGNACION",
+    "identificador": "contador",
+    "expresion": {
+      "tipo": "number",
+      "valor": 0
+    },
+    "tipo3": "number"
+  },
+  {
+    "tipo": "ASIGNACION_SIMPLE",
+    "operador": "=",
+    "expresion": {
+      "tipo": "number",
+      "valor": 2
+    },
+    "identificador": "var",
+    "tipo2": "any"
+  },
+  {
+    "tipo": "ASIGNACION_SIMPLE",
+    "operador": "=",
+    "expresion": {
+      "tipo": "VAL_CADENA",
+      "valor": "\"hola\""
+    },
+    "identificador": "var2",
+    "tipo2": "string"
+  },
+  {
+    "tipo": "INSTR_DECLARACION",
+    "identificador": "i",
+    "tipo_dato": "number"
+  },
+  {
+    "tipo": "INSTR_FOR",
+    "expresionLogica": {
+      "operaIzq": {
+        "tipo": "VAL_IDENTIFICADOR",
+        "valor": "i"
+      },
+      "operaDere": {
+        "tipo": "number",
+        "valor": 3
+      },
+      "tipo": "OP_MENOR_QUE"
+    },
+    "instrucciones": [
+      {
+        "tipo": "INSTR_CONSOLE",
+        "expresionCadena": {
+          "tipo": "VAL_CADENA",
+          "valor": "\"ejecutando for\""
+        }
+      }
+    ],
+    "aumento": {
+      "valor": "i",
+      "tipo_incremento": "+"
+    },
+    "variable": "i",
+    "valorVariable": {
+      "tipo": "number",
+      "valor": 0
+    },
+    "tipo_val": "no"
+  }
+]

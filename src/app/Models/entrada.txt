@@ -1,0 +1,7 @@
+let contador:number =0;
+var =2;
+var2:string = "hola";
+let i:number;
+for(i=0;i<3;i++){
+    console.log("ejecutando for");
+}

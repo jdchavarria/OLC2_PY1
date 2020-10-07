@@ -1,3 +1,5 @@
+export var tabla_simbolos = [];
+
 //constantes para los tipos de datos que se controlan
 const TIPO_DATO = {
     NUMBER: 'number',
@@ -6,11 +8,13 @@ const TIPO_DATO = {
 }
 
 //funcion para crear objetos de tipo simbolo 
-function crearSimbolo(id,tipo,valor){
+function crearSimbolo(tipo_instr,id,tipo,valor,parametro){
     return{
+        tipo_instr: tipo_instr,
         id: id,
         tipo: tipo,
-        valor:valor
+        valor:valor,
+        parametro:parametro
     }
 }
 
@@ -26,21 +30,35 @@ class TS {
     //funcion para agregar nuevo simbolo
     // para la sentencia declarar
 
-    agregar(id,tipo){
-        const nuevoSimbolo = crearSimbolo(id,tipo,"indefinido");
+    agregar(tipo_istr,id,tipo,parametro){
+        const nuevoSimbolo = crearSimbolo(tipo_istr, id,tipo,"indefinido",parametro);
         this._simbolos.push(nuevoSimbolo);
     }
 
-    agregar2(id,tipo,valor){
-        const nuevoSimbolo = crearSimbolo(id,tipo,valor);
+    agregar2(tipo_istr,id,tipo,valor,parametro){
+        const nuevoSimbolo = crearSimbolo(tipo_istr, id,tipo,valor,parametro);
         this._simbolos.push(nuevoSimbolo);
+        tabla_simbolos.push(nuevoSimbolo);
+        console.log("llego a guardar");
     }
 
     //funcion para actualizar el valor de un simbolo existente
     //para sentencia asignar
     actualizar(id,valor){
-        const simbolo = this._simbolos.filter(simbolo=> simbolo.id == id)[0];
+
+        for(let i=0;i<this._simbolos.length;i++){
+            if(this._simbolos[i].id == id){
+                console.log(id);
+                //console.log("no encuentra");
+                this._simbolos[i].valor = valor;
+                break;
+            }else{
+                //console.log("error no hay varibales");
+            }
+        }
+       /* const simbolo = this._simbolos.filter(simbolo=> simbolo.id == id)[0];
         if(simbolo){
+            console.log("esto");
             simbolo.valor = valor.valor;
            /* if(simbolo.tipo==valor.tipo){
                 if(simbolo.tipo==TIPO_DATO.NUMBER){
@@ -59,9 +77,9 @@ class TS {
             }else{
                 throw 'ERROR DE TIPOS';
             }*/
-        }else{
-            throw 'ERROR: variable: '+id+'no ha sido definida';
-        }
+       // }else{
+         //   throw 'ERROR: variable: '+id+'no ha sido definida';
+       // }
     }
 
     actualizar2(id,valor){
@@ -91,9 +109,25 @@ class TS {
     }
 
     obtener(id){
-        const simbolo = this._simbolos.filter(simbolo => simbolo.id==id)[0];
-        if(simbolo) return simbolo; //se devuelve el simbolo completo
-        else throw 'ERROR: variable: '+id+'no ha sido definida';
+        //console.log(id);
+        let simbolo:any=" ";
+        for(let i=0;i<tabla_simbolos.length;i++){
+            if(tabla_simbolos[i].id == id){
+                //console.log(tabla_simbolos[i]);
+                simbolo = tabla_simbolos[i];
+                break;
+            }else{
+                //console.log("error");
+            }
+            //console.log(tabla_simbolos[i]);
+        }
+       /*const simbolo = this._simbolos.filter(simbolo => simbolo.id==id)[0];
+        if(simbolo){
+            console.log("obtener");
+            return simbolo; //se devuelve el simbolo completo
+        } 
+        else throw 'ERROR: variable: '+id+'no ha sido definida';*/
+        return simbolo;
     }
 
     obtenerValor(id){
@@ -113,4 +147,8 @@ class TS {
 
 //exportamos las constantes y la clase
 export const TiPO_DATO = TIPO_DATO;
-export const Ts = TS;
+export  {TS};
+export function resetTS(){
+    tabla_simbolos = [];
+    
+}

@@ -26,7 +26,8 @@ const TIPO_OPERACION = {
     NOT: 'OP_NOT',
     CONCATENACION: 'OP_CONCATENACION',
     POTENCIA: 'OP_POTENCIA',
-    MODULO: 'MODULO'
+    MODULO: 'MODULO',
+    RETORNAR: 'RETORNAR'
 }
 
 //constantes para los tipos de instrucciones del lenguaje
@@ -45,7 +46,20 @@ const TIPO_INSTRUCCION = {
     AUMENTO:       'INSTR_AUMENTO',
     FUNCION:  'INSTR_FUNCION',
     GRAFICAR:  'INSTR_GRAFICAR',
-    DOWHILE:    'INSTR_DOWHILE'
+    DOWHILE:    'INSTR_DOWHILE',
+    LLAMADA_FUN: 'INSTRU_LLAMADA',
+    ASIGNAR_VEC: 'INSTR_ASIG_VEC',
+    ACCEDER_VEC: 'INSTRU_ACC_VEC',
+    LONG_VEC: 'INSTR_LONG',
+    NUEVO_ARR: 'INSTR_NU_ARR',
+    POP: 'INSTR_POP',
+    PUSH: 'INSTR_PUSH',
+    FOR_IN: 'INSTR_FORIN',
+    FOR_OF: 'INSTR_FOROF',
+    CONSOLE_ARRAY: 'INSTR_CONSO_ARR',
+    RETURN: 'INSTR_RETURN',
+    BREAK: 'INSTR_BREAK',
+    CONTINUE: 'INSTR_CONTINUE'
 }
 
 //constantes para el tipo de casos del switch
@@ -236,6 +250,93 @@ const instruccionesAPI ={
             tipo: TIPO_INSTRUCCION.DOWHILE,
             instrucciones: instrucciones,
             expresion: expresion
+        }
+    },
+    nuevoLlamadaFun: function(id, parametros){
+        return {
+            tipo: TIPO_INSTRUCCION.LLAMADA_FUN,
+            identificador: id,
+            parametros: parametros
+        }
+    },
+    nuevoAsigValVec: function(expresion){
+        return{
+            tipo: TIPO_INSTRUCCION.ASIGNAR_VEC,
+            expresion: expresion
+        }
+    },
+    nuevoAccVec: function(identificador,expresion){  
+        return{
+            tipo: TIPO_INSTRUCCION.ACCEDER_VEC,
+            identificador: identificador,
+            expresion: expresion
+        }
+    },
+    nuevoLongitud: function(identificador){
+        return{
+            tipo: TIPO_INSTRUCCION.LONG_VEC,
+            identificador: identificador
+        }
+    },
+    nuevoArray: function(array, valor){
+        return{
+            tipo: TIPO_INSTRUCCION.NUEVO_ARR,
+            array: array,
+            valor: valor
+        }
+    },
+    nuevoPop: function(identificador){
+        return{
+            tipo: TIPO_INSTRUCCION.POP,
+            identificador: identificador
+        }
+    },
+    nuevoPush: function(identificador,expresion){
+        return{
+            tipo: TIPO_INSTRUCCION.PUSH,
+            identificador: identificador,
+            expresion: expresion
+        }
+    },
+    nuevoForIn: function(variable, identificador, instrucciones){
+        return{
+            tipo: TIPO_INSTRUCCION.FOR_IN,
+            variable: variable,
+            identificador: identificador,
+            instrucciones: instrucciones
+        }
+    },
+    nuevoForOf: function(variable, identificador,instrucciones){
+        return{
+            tipo: TIPO_INSTRUCCION.FOR_OF,
+            variable: variable,
+            identificador: identificador,
+            instrucciones: instrucciones
+        }
+    },
+    nuevoMostrarArray: function(expresion, identificador){
+        return{
+            tipo:TIPO_INSTRUCCION.CONSOLE_ARRAY,
+            expresion: expresion,
+            identificador: identificador
+        }
+    },
+    nuevoReturn: function(expresion){
+        return{
+            tipo: TIPO_INSTRUCCION.RETURN,
+            expresion: expresion
+        }
+    },
+    nuevoBreak: function(identificador){
+        return{
+            tipo: TIPO_INSTRUCCION.BREAK,
+            identificador: identificador
+        }
+    },
+    nuevoContinue: function(identificador){
+        return{
+            tipo: TIPO_INSTRUCCION.CONTINUE,
+            identificador: identificador
         }
     }
 }

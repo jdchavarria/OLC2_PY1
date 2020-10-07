@@ -37,6 +37,12 @@
 "continue"                  return 'RCONTINUE';
 "graficar_ts()"             return 'RTS';
 "do"                        return 'RDO';
+"const"                     return 'RCONST';
+"length"                   return 'RLENGTH';
+"push"                     return 'RPUSH';
+"pop"                      return 'RPOP';
+"of"                        return 'ROF';
+"in"                        return 'RIN';
 
 
 /* simbolos */
@@ -144,18 +150,27 @@ CUERPO              : DECLARACION                               {$$=$1;}
                     | SWITCH                                    {$$=$1;}
                     | WHILE                                     {$$=$1;}
                     | FOR                                       {$$=$1;}
-                    | CONTINUE 
-                    | RETURN
-                    | BREAK
+                    | CONTINUE                                  {$$=$1;}
+                    | RETURN                                    {$$=$1;}
+                    | BREAK                                     {$$=$1;}
                     | ASIGNACION                                {$$=$1;}
                     | AUMENTO                                   {$$=$1;}
                     | FUNCTION                                  {$$=$1;}
                     | GRAFICARTS                                {$$=$1;}
                     | DOWHILE                                   {$$=$1;}
+                    | ASIGNA_ARRAY IGUAL EXPRE PTCOMA           {$$=instruccionesAPI.nuevoArray($1,$3);}
+                    | PUSH_ARRAY PTCOMA                         {$$=$1;}
+                    | POP_ARRAY PTCOMA                          {$$=$1;}
+                    | FOR_OF                                    {$$=$1;}
+                    | FOR_IN                                    {$$=$1;}
+                    | LLAMADA_METODO PTCOMA                     {$$=$1;}
+                    | RCONSOLE PARIZQ EXPRE COMA EXPRE PARDER PTCOMA    {$$=instruccionesAPI.nuevoMostrarArray($3,$5);}
 
 ;
 
 DECLARACION          : RLET IDLISTA PTCOMA      {$$=$2;}
+                     | RCONST IDENTIFICADOR IGUAL EXPRE PTCOMA
+                     | RCONST IDENTIFICADOR DOSPTS TIPO IGUAL EXPRE PTCOMA
 ;
 
 IDLISTA              : IDLISTA COMA IDLIST {$1.push($3); $$=$1}
@@ -192,6 +207,7 @@ AUMENTO              : IDENTIFICADOR MAS MAS PTCOMA                     {$$=inst
 TIPO                 : RSTRING {$$=$1;}
                      | RNUMBER {$$=$1;}
                      | RBOOLEAN {$$=$1;}
+                     | TIPO CORIZQ CORDER {$$=$1;}
                      ;
 
 ASIGNAR_EXPRESION    : IGUAL EXPRE {$$=$2;}
@@ -217,15 +233,23 @@ EXPRE                : EXPRE MAS EXPRE          {$$=instruccionesAPI.nuevoOperac
                      | EXPRE AND EXPRE          {$$=instruccionesAPI.nuevoOperacionBinaria($1,$3,TIPO_OPERACION.AND);}
                      | EXPRE OR EXPRE           {$$=instruccionesAPI.nuevoOperacionBinaria($1,$3,TIPO_OPERACION.OR);}
                      | EXPRE MODULO EXPRE       {$$=instruccionesAPI.nuevoOperacionBinaria($1,$3,TIPO_OPERACION.MODULO);}
-                     | EXPRE POTENCIA EXPRE     {$$=instruccionesAPI.nuevoOperacionBinaria($1,$3,TIPO_OPERACION.POTENCIA);}
+                     | EXPRE POR POR EXPRE     {$$=instruccionesAPI.nuevoOperacionBinaria($1,$4,TIPO_OPERACION.POTENCIA);}
                      | MENOS EXPRE %prec UMENOS {$$=instruccionesAPI.nuevoOperacionUnaria($2,TIPO_OPERACION.NEGATIVO);}
                      | PARIZQ EXPRE PARDER      {$$=$2;}
                      | NOT EXPRE                {$$=instruccionesAPI.nuevoOperacionUnaria($2,TIPO_OPERACION.NOT);}
                      | ENTERO                   {$$=instruccionesAPI.nuevoValor(Number($1),TIPO_VALOR.ENTERO);}
+                     | DECIMAL                  {$$=instruccionesAPI.nuevoValor(Number($1),TIPO_VALOR.DECIMAL);}
                      | IDENTIFICADOR            {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.IDENTIFICADOR);}
                      | CADENA                   {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.CADENA);}
                      | CADENA2                  {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.CADENA);}
                      | CADENA3                  {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.CADENA);}
+                     | LLAMADA_METODO           {$$=$1;}
+                     | ASIGNAR_ARRAY            {$$=instruccionesAPI.nuevoAsigValVec($1);}
+                     | LONGITUD_ARRAY           {$$=$1;}
+                     | ASIGNA_ARRAY             {$$=$1;}
+                     | RTRUE                    {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.TRUE);}
+                     | RFALSE                   {$$=instruccionesAPI.nuevoValor($1,TIPO_VALOR.FALSE);}
+                     | POP_ARRAY
                      ;
 
 IF                   : RIF PARIZQ CONDICION PARDER LLAVIZQ instrucciones LLAVDER                               {$$=instruccionesAPI.nuevoIf($3,$6);}
@@ -251,10 +275,10 @@ CASO_EVALUAR         : RCASE EXPRE DOSPTS instrucciones       {$$=instruccionesA
 WHILE                : RWHILE PARIZQ CONDICION PARDER LLAVIZQ instrucciones LLAVDER    {$$=instruccionesAPI.nuevoWhile($3,$6);}
 ;
 
-BREAK               : RBREAK PTCOMA
+BREAK               : RBREAK PTCOMA     {$$=instruccionesAPI.nuevoBreak($1);}
 ;
 
-CONTINUE            : RCONTINUE PTCOMA
+CONTINUE            : RCONTINUE PTCOMA  {$$=instruccionesAPI.nuevoContinue($1);}
 ;
 
 FOR                 : RFOR PARIZQ RLET IDENTIFICADOR DOSPTS TIPO ASIGNAR_EXPRESION PTCOMA EXPRE PTCOMA ITERADOR PARDER LLAVIZQ instrucciones LLAVDER {$$=instruccionesAPI.nuevoFor($4,$6,$7,$9,$11,$14);}
@@ -282,12 +306,12 @@ TIPO_RETORNO         : DOSPTS RVOID     {$$=$2;}
 PARAMETROS           : PARASIG {$$=$1;}
 ;
 
-RETURN               : RRETURN PTCOMA
-                     | RRETURN EXPRE PTCOMA
+RETURN               : RRETURN PTCOMA           {$$=instruccionesAPI.nuevoReturn("indefinido");}
+                     | RRETURN EXPRE PTCOMA     {$$=instruccionesAPI.nuevoReturn($2);}
                      ;
 
 PARASIG              : PARASIG COMA LIASIG       {$1.push($3); $$=$1;}
-                     | LIASIG                    {$$=$1;}
+                     | LIASIG                    {$$=[$1];}
                      ;
 
 LIASIG               : IDENTIFICADOR DOSPTS TIPO                        {$$=instruccionesAPI.nuevoDeclaracion($1,$3);}
@@ -298,3 +322,39 @@ GRAFICARTS           : RTS  PTCOMA       {$$=instruccionesAPI.nuevoGraficar($1);
 
 DOWHILE              : RDO LLAVIZQ instrucciones LLAVDER RWHILE PARIZQ EXPRE PARDER PTCOMA  {$$=instruccionesAPI.nuevoDoWhile($3,$7);}
                      ;
+
+LLAMADA_METODO       : IDENTIFICADOR PARIZQ PARAMETROS_LLAMADA PARDER {$$=instruccionesAPI.nuevoLlamadaFun($1,$3);}
+                     | IDENTIFICADOR PARIZQ PARDER {$$=instruccionesAPI.nuevoLlamadaFun($1,"sin");}
+;
+
+PARAMETROS_LLAMADA   : PARAMETROS_LLAMADA COMA EXPRE {$1.push($3); $$=$1;}
+                     | EXPRE                         {$$=[$1];}
+                     ;
+
+ASIGNAR_ARRAY        : CORIZQ LISTA_EXPRE CORDER {$$=$2;}
+                     | CORIZQ CORDER
+;
+
+LISTA_EXPRE          : LISTA_EXPRE COMA EXPRE {$1.push($3); $$=$1;}
+                     | EXPRE                  {$$=[$1];}
+                     ;
+
+ASIGNA_ARRAY         : IDENTIFICADOR CORIZQ EXPRE CORDER {$$=instruccionesAPI.nuevoAccVec($1,$3);}
+;
+
+LONGITUD_ARRAY       : IDENTIFICADOR PUNTO RLENGTH {$$=instruccionesAPI.nuevoLongitud($1);}
+;
+
+PUSH_ARRAY            : IDENTIFICADOR PUNTO RPUSH PARIZQ EXPRE PARDER {$$=instruccionesAPI.nuevoPush($1,$5);}
+;
+
+POP_ARRAY            : IDENTIFICADOR PUNTO RPOP PARIZQ PARDER       {$$=instruccionesAPI.nuevoPop($1);}
+;
+
+FOR_OF               : RFOR PARIZQ RLET IDENTIFICADOR ROF IDENTIFICADOR PARDER LLAVIZQ instrucciones LLAVDER
+                      {$$=instruccionesAPI.nuevoForOf($4,$6,$9);}
+;
+
+FOR_IN               : RFOR PARIZQ RLET IDENTIFICADOR RIN IDENTIFICADOR PARDER LLAVIZQ instrucciones LLAVDER
+                        {$$=instruccionesAPI.nuevoForIn($4,$6,$9);}
+;
